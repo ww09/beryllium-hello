@@ -1,0 +1,74 @@
+module hello-impl {
+    yang-version 1;
+    namespace "urn:opendaylight:params:xml:ns:yang:controller:config:hello:impl";
+    prefix "hello-impl";
+
+    //2013-04-05 ，不能随便写，需要确定controller的yang定义
+   // Set<YangModuleInfo> set = new HashSet<>();
+   // set.add(org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.controller.md.sal.binding.rev131028.$YangModuleInfoImpl.getInstance());
+    //set.add(org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.controller.config.rev130405.$YangModuleInfoImpl.getInstance());
+    //set.add(org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.rpc.context.rev130617.$YangModuleInfoImpl.getInstance());
+
+    import config { prefix config; revision-date 2013-04-05; }
+    import rpc-context { prefix rpcx; revision-date 2013-06-17; }
+    //mdsal prefix 版本有区别，这个不能随便写, prefix md-sal;
+    import opendaylight-md-sal-binding {
+        prefix mdsal;
+        revision-date 2013-10-28;
+    }
+
+    description
+        "Service definition for hello project";
+    //生成包名称后缀
+    revision "2016-05-20" {
+        description
+            "Initial revision";
+    }
+
+    identity hello-impl {
+        base config:module-type;
+        config:java-name-prefix HelloImpl;
+    }
+
+    augment "/config:modules/config:module/config:configuration" {
+        description
+              "Augments the 'configuration' choice node under
+               modules/module.";
+        case hello-impl {
+            when "/config:modules/config:module/config:type = 'hello-impl'";
+
+            container data-broker {
+                description
+                          "wires in the data broker registry service";
+                uses config:service-ref {
+                    refine type {
+                        mandatory false;
+                        config:required-identity mdsal:binding-async-data-broker;
+                    }
+                }
+            }
+            // DEMO中默认只设置了这个配置，container还不同
+            container binding-registry {
+                    description
+                      "wires in the binding broker osgi service";
+                    uses config:service-ref {
+                      refine type {
+                        mandatory true;
+                        config:required-identity mdsal:binding-broker-osgi-registry;
+                      }
+                    }
+                  }
+
+            container rpc-registry {
+                    description
+                      "wires in the RPC registry service";
+                    uses config:service-ref {
+                      refine type {
+                         mandatory true;
+                         config:required-identity mdsal:binding-rpc-registry;
+                      }
+                    }
+                  }
+        }
+    }
+}

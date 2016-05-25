@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- vi: set et smarttab sw=4 tabstop=4: -->
+<!--
+Copyright (c) 2015 Cisco Systems
+
+This program and the accompanying materials are made available under the
+terms of the Eclipse Public License v1.0 which accompanies this distribution,
+and is available at http://www.eclipse.org/legal/epl-v10.html
+-->
+<features name="odl-hello-${project.version}" xmlns="http://karaf.apache.org/xmlns/features/v1.2.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://karaf.apache.org/xmlns/features/v1.2.0 http://karaf.apache.org/xmlns/features/v1.2.0">
+    
+    <repository>mvn:org.opendaylight.yangtools/features-yangtools/${yangtools.version}/xml/features</repository>
+    <repository>mvn:org.opendaylight.controller/features-mdsal/${controller.mdsal.version}/xml/features</repository>
+    <repository>mvn:org.opendaylight.mdsal.model/features-mdsal-model/${mdsal.model.version}/xml/features</repository>
+    <repository>mvn:org.opendaylight.mdsal/features-mdsal/${mdsal.version}/xml/features</repository>
+
+    <repository>mvn:org.opendaylight.netconf/features-restconf/${netconf.restconf.version}/xml/features</repository>
+    <repository>mvn:org.opendaylight.netconf/features-netconf-connector/${netconf.parent.version}/xml/features</repository>
+
+
+    <feature name="odl-hello-model" version="${project.version}" description="OpenDaylight :: hello :: Model">
+        <!--对应的是org/opendaylight/mdsal/model-->
+        <feature version="${mdsal.model.version}">odl-mdsal-models</feature>
+        <bundle>mvn:org.opendaylight.tutorials/hello-model/${project.version}</bundle>
+    </feature>
+
+    <feature name="odl-hello-impl" version="${project.version}" description="OpenDaylight :: hello :: impl ">
+        <!-- controller-mdsal-->
+        <feature version="${controller.mdsal.version}">odl-mdsal-broker</feature>
+        <feature version="${project.version}">odl-hello-model</feature>
+        <bundle>mvn:org.opendaylight.tutorials/hello-impl/${project.version}</bundle>
+        <configfile finalname="etc/opendaylight/karaf/100-hello.xml">mvn:org.opendaylight.tutorials/hello-config/${project.version}/xml/config</configfile>
+    </feature>
+</features>
